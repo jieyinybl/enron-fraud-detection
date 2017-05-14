@@ -10,20 +10,40 @@ from tester import dump_classifier_and_data
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
-features_list = ['poi','salary'] # You will need to use more features
-
+target_label = 'poi'
+features_list = ['poi','salary','deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'long_term_incentive', 'restricted_stock', 'director_fees', 'to_messages', 'from_poi_to_this_person', 'from_messages', 'from_this_person_to_poi', 'shared_receipt_with_poi'] # You will need to use more features
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
 ### Task 2: Remove outliers
+
+
 ### Task 3: Create new feature(s)
 ### Store to my_dataset for easy export below.
 my_dataset = data_dict
-
 ### Extract features and labels from dataset for local testing
-data = featureFormat(my_dataset, features_list, sort_keys = True)
-labels, features = targetFeatureSplit(data)
+### read in data dictionary, convert to numpy array
+my_dataset = featureFormat(my_dataset, features_list)
+labels, features = targetFeatureSplit(my_dataset)
+#data = featureFormat(my_dataset, features_list, sort_keys = True)
+#labels, features = targetFeatureSplit(data)
+
+### Deploy univariate feature selection with SelectKBest
+from sklearn.feature_selection import SelectKBest
+#print my_dataset
+X, y = features, labels
+#print X
+#print y
+select_k_best = SelectKBest(k=5)
+select_k_best.fit(X,y)
+scores = select_k_best.scores_
+#print scores
+feature_scores = zip(features_list[1:], scores)
+sorted_feature_scores = list(reversed(sorted(feature_scores, key=lambda x: x[1])))
+print sorted_feature_scores
+k_best_features = dict(sorted_feature_scores[:5])
+print k_best_features
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
