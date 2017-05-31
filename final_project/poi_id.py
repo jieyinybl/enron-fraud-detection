@@ -98,7 +98,7 @@ def PlotOutlier(data_dict, feature_x, feature_y):
     plt.show()
 
 ### Visualise outliers
-#print(PlotOutlier(data_dict, 'salary', 'total_payments'))
+print(PlotOutlier(data_dict, 'salary', 'total_payments'))
 
 from pprint import pprint
 
@@ -247,4 +247,4 @@ print recall_score(labels_test, k_pred)
 ### generates the necessary .pkl files for validating your results.
 
 dump_classifier_and_data(nb_clf, my_dataset, k_best_features)
-dump_classifier_and_data(k_clf, my_dataset, k_best_features)
+#dump_classifier_and_data(k_clf, my_dataset, k_best_features)
