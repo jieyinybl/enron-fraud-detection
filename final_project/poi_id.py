@@ -6,34 +6,63 @@ import pickle
 import matplotlib.pyplot as plt
 import numpy as np 
 sys.path.append("../tools/")
-
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+from pprint import pprint
+from decimal import Decimal
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import *
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.linear_model import LinearRegression
+from sklearn.svm import SVC
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import chi2
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
+from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import StratifiedShuffleSplit
+
+
 
 ### Task 1: Select what features you'll use.
-### features_list is a list of strings, each of which is a feature name.
-### The first feature must be "poi".
+
 target_label = 'poi'
-features_list = [
-    'poi',
-    'salary',
+
+financial_features = [
+    'salary', 
+    'deferral_payments', 
     'total_payments', 
+    'loan_advances', 
     'bonus', 
+    'restricted_stock_deferred', 
+    'deferred_income', 
     'total_stock_value', 
     'expenses', 
     'exercised_stock_options', 
+    'other', 
+    'long_term_incentive', 
     'restricted_stock', 
+    'director_fees'
+]
+
+email_features = [
     'to_messages', 
     'from_poi_to_this_person', 
     'from_messages', 
     'from_this_person_to_poi', 
     'shared_receipt_with_poi'
 ]
+
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
 
 ### Data exploration
+
 ### Total number of data points
 print ('Total number of data points: %d' %len(data_dict))
 
@@ -43,13 +72,16 @@ for name in data_dict:
     person = data_dict[name]
     if person['poi']:
         num_poi += 1
-print ('Number of person of interest %d' %num_poi)
-print ('Number of non person of interest %d' %(len(data_dict)-num_poi))
+print ('Number of person of interest: %d' %num_poi)
+print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
 
 ### Number of features used
-names = data_dict.keys()
-all_features = data_dict['METTS MARK'].keys()
-print('Number of features used %d' %len(all_features))
+#names = data_dict.keys()
+#all_features = data_dict['METTS MARK'].keys()
+all_features = financial_features + email_features
+print('Number of features: %d' %len(all_features))
+print('Number of financial features: %d' %len(financial_features))
+print('Number of email features: %d' %len(email_features))
 
 ### Missing values in features
 def num_missing_value(feature):
@@ -60,34 +92,13 @@ def num_missing_value(feature):
             num_missing_value += 1
     print ('Number of missing value in feature %s: %d' %(feature, num_missing_value))
 
-num_missing_value('salary')
-num_missing_value('to_messages')
-num_missing_value('deferral_payments')
-num_missing_value('total_payments')
-num_missing_value('exercised_stock_options')
-num_missing_value('bonus')
-num_missing_value('restricted_stock')
-num_missing_value('shared_receipt_with_poi')
-num_missing_value('restricted_stock_deferred')
-num_missing_value('total_stock_value')
-num_missing_value('expenses')
-num_missing_value('loan_advances')
-num_missing_value('from_messages')
-num_missing_value('from_this_person_to_poi')
-num_missing_value('poi')
-num_missing_value('director_fees')
-num_missing_value('deferred_income')
-num_missing_value('long_term_incentive')
-num_missing_value('email_address')
-num_missing_value('from_poi_to_this_person')
+for feature in all_features:
+    num_missing_value(feature)
 
 ### Task 2: Remove outliers
 
-### Remove total line
-data_dict.pop('TOTAL', 0)
-
-### Function to plot outliers
-def PlotOutlier(data_dict, feature_x, feature_y):
+### Function to plot 2 dimensions
+def Plot_2dimension(data_dict, feature_x, feature_y):
     data = featureFormat(data_dict, [feature_x, feature_y])
     for point in data:
         x = point[0]
@@ -97,11 +108,10 @@ def PlotOutlier(data_dict, feature_x, feature_y):
     plt.ylabel(feature_y)
     plt.show()
 
-### Visualise outliers
-print(PlotOutlier(data_dict, 'salary', 'total_payments'))
+### Visualise outliers by 2 dimension ploting
+print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
 
-from pprint import pprint
-
+### Create list of outliers based on dimension salary
 outliers = []
 for key in data_dict:
     val = data_dict[key]['salary']
@@ -109,142 +119,202 @@ for key in data_dict:
         continue
     outliers.append((key,int(val)))
 
+### Sort the list of outliers and print the top 1 outlier in the list
+print ('Outliers in terms of salary: ')
+pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:1])
+
+### Remove the top 1 outlier: the total line
+data_dict.pop('TOTAL', 0)
+
+### Visualise outliers after removing the total line
+print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
+
+### Sort the list of outliers and print the top 3 outliers in the list
+print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:3])
 
-data_dict.pop('SKILLING JEFFREY K',0)
-data_dict.pop('LAY KENNETH L',0)
-data_dict.pop('FREVERT MARK A',0)
-
-### Visualise data after removing outliers
-#print(PlotOutlier(data_dict, 'salary', 'total_payments'))
+### Print out the three persons with highest salary
+print ('Three persons of highest salary:')
+print (data_dict['SKILLING JEFFREY K'])
+print (data_dict['LAY KENNETH L'])
+print (data_dict['FREVERT MARK A'])
 
 ### Task 3: Create new feature(s)
 
-### Store to my_dataset for easy export below.
+### Store data_dict to my_dataset
 my_dataset = data_dict
 
-### Add new features to dataset
-from decimal import Decimal
+### Create function to compute ratio
 def compute_ratio(num_poi_messages, num_total_messages):
     if num_poi_messages != 'NaN' and num_total_messages != 'NaN' and num_total_messages != 0:
         fraction = float(num_poi_messages / num_total_messages)
     else:
         fraction = 0
     return fraction
+
+### Create new features: percent_received_email_from_poi & percent_send_email_to_poi
 for name in my_dataset:
     name = my_dataset[name]
     percent_received_email_from_poi = compute_ratio(name['from_poi_to_this_person'], name['to_messages'])
     name['percent_received_email_from_poi'] = percent_received_email_from_poi
     percent_send_email_to_poi = compute_ratio(name['from_this_person_to_poi'], name['from_messages'])
     name['percent_send_email_to_poi'] = percent_send_email_to_poi
-    print ('From person of interest to this person ratio: %f' % percent_received_email_from_poi)
-    print ('From this person to person of interest ratio: %f' % percent_send_email_to_poi)
 
-all_features = features_list + ['percent_received_email_from_poi', 'percent_send_email_to_poi']
-
-print ('All features: {0}'.format(all_features))
-print ('Number of features used %d' %len(all_features))
+all_features = [target_label] + all_features + ['percent_received_email_from_poi', 'percent_send_email_to_poi']
 
 ### Extract features and labels from dataset for local testing
-### read in data dictionary, convert to numpy array
 my_dataset = featureFormat(my_dataset, all_features)
-labels, features = targetFeatureSplit(my_dataset)
-
-### Scale features using MinMAxScaler
-from sklearn.preprocessing import MinMaxScaler
-scaled_features = MinMaxScaler().fit_transform(features)
+labels_i, features_i = targetFeatureSplit(my_dataset)
 
 ### Deploy univariate feature selection with SelectKBest
-from sklearn.feature_selection import SelectKBest
-X, y = scaled_features, labels
-k = 10
-select_k_best = SelectKBest(k=k)
-select_k_best.fit(X,y)
-scores = select_k_best.scores_
-unsorted_pairs = zip(features_list[1:], scores)
-k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
-print ('{0} best features: {1}'.format(k, k_best_features.keys()))
+
+def select_k_best(k):
+    select_k_best = SelectKBest(k=k)
+    select_k_best.fit(features_i, labels_i)
+    scores = select_k_best.scores_
+    unsorted_pairs = zip(all_features[1:], scores)
+    k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
+    return [target_label] + k_best_features.keys()
 
 ### Task 4: Try a varity of classifiers
-### Please name your classifier clf for easy export below.
-### Note that if you want to do PCA or other multi-stage operations,
-### you'll need to use Pipelines. For more info:
-### http://scikit-learn.org/stable/modules/pipeline.html
 
-# Provided to give you a starting point. Try a variety of classifiers.
 ### Gaussian Naive Bayes
-from sklearn.naive_bayes import GaussianNB
 nb_clf = GaussianNB()
+### SVC
+svc_clf=SVC(probability=False)
+### KNN
+knn_clf = KNeighborsClassifier()
+### Decision tree
+dt_clf = DecisionTreeClassifier() 
+### LogisticRegression
+l_clf = LogisticRegression(penalty='l2')
 
-### Lasso regression
-from sklearn.linear_model import Lasso
-lasso_clf = Lasso()
-
-### K means
-from sklearn.cluster import KMeans
-k_clf = KMeans(n_clusters=2)
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
 ### folder for details on the evaluation method, especially the test_classifier
-### function. Because of the small size of the dataset, the script uses
-### stratified shuffle split cross validation. For more info: 
-### http://scikit-learn.org/stable/modules/generated/sklearn.cross_validation.StratifiedShuffleSplit.html
+### function. 
 
-# Example starting point. Try investigating other evaluation techniques!
-from sklearn.model_selection import train_test_split
-features_train, features_test, labels_train, labels_test = \
-    train_test_split(features, labels, test_size=0.3, random_state=42)
 
-### Accuracy of naive bayes classifier
-nb_clf.fit(features_train, labels_train)
-nb_pred = nb_clf.predict(features_test)
-from sklearn.metrics import accuracy_score
-naive_bayes_test_score = accuracy_score(labels_test, nb_pred)
-print ('Naive Bayes Classifier Test score %f' %naive_bayes_test_score)
+### Evaluation: Precision, recall, f1
 
-### Accuracy of lasso regression classifier
-#lasso_clf.fit(features_train, labels_train)
-#pred = lasso_clf.predict(features_test)
-#lasso_test_score = accuracy_score(labels_test, pred)
-#print ('Test score %f' %lasso_test_score)
+def evaluation(features, labels, clf, name):
+    cv = StratifiedShuffleSplit(n_splits=10, test_size=0.3, random_state=42)
+    cv.get_n_splits(features, labels)
+    print(cv)
+    accuracy = []
+    precision = []
+    recall = []
+    f1 = []
+    for train_index, test_index in cv.split(features,labels):
+        features_train = [features[ii] for ii in train_index]
+        features_test = [features[ii] for ii in test_index]
+        labels_train = [labels[ii] for ii in train_index]
+        labels_test = [labels[ii] for ii in test_index]
+        clf.fit(features_train, labels_train)
+        labels_pred = clf.predict(features_test)
+        accuracy.append(round(accuracy_score(labels_test, labels_pred),2))
+        precision.append(round(precision_score(labels_test, labels_pred),2))
+        recall.append(round(recall_score(labels_test, labels_pred),2))
+        f1.append(f1_score(labels_test, labels_pred))
+    print (name)
+    print ('Mean of accuracy: {0}'.format(np.mean(accuracy)))
+    print ('Mean of precision: {0}'.format(np.mean(precision)))
+    print ('Mean of recall: {0}'.format(np.mean(recall)))
+    print ('Mean of f1 score: {0}'.format(np.mean(f1)))
 
-### Accuracy of KMeans classifier
-k_clf.fit(features_train, labels_train)
-k_pred = k_clf.predict(features_test)
-k_means_test_score = accuracy_score(labels_test, k_pred)
-print ('KMeans Classifier Test score %f' %k_means_test_score)
+def find_best_params(clf, features, labels, param_grid):
+    grid = GridSearchCV(clf, param_grid, cv=10, scoring = 'recall')
+    grid.fit(features, labels)
+    grid.grid_scores_
+    grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
+    return grid.best_params_
 
-### K-Fold CV
-#from sklearn.model_selection import KFold
-#X = features
-#y = labels
-#kf = KFold(n_splits=2, shuffle = True)
-#for train, test in kf.split(X):
-#    X_train = [train]
-#    X_test = [test]
-#    print X_train
+### Param Grid KNN
+k_range = list(range(1,11))
+algorithm_options = ['ball_tree','kd_tree','brute','auto']
+param_grid_knn = dict(n_neighbors=k_range, algorithm=algorithm_options)
 
-### Tunning naive bayes classifier
-#from sklearn import grid_search
-#parameters = {'priors': ['array-like']}
-#nb_clf_tunned = grid_search.GridSearchCV(nb_clf, parameters)
-#nb_clf_tunned.fit(features, labels)
-#print nb_clf_tunned.best_params_
+### Param Grid SVC
+param_grid_svc = [
+  {'C': [1, 10, 50, 100, 150, 1000], 'kernel': ['linear','rbf']},
+  {'C': [1, 10, 50, 100, 150, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001], 'kernel': ['linear','rbf']}]
 
-### Tunning lasso classifier
+### Param Grid Decision Tres Classifier
+param_grid_dt = {"criterion": ["gini", "entropy"],
+              "min_samples_split": [2, 10, 20],
+              "max_depth": [None, 2, 5, 10],
+              "min_samples_leaf": [1, 5, 10],
+              "max_leaf_nodes": [None, 5, 10, 20],
+              }
 
-### Evaluation: Precision and recall
-from sklearn.metrics import *
-print precision_score(labels_test, nb_pred)
-print recall_score(labels_test, nb_pred)
-print precision_score(labels_test, k_pred)
-print recall_score(labels_test, k_pred)
+### GridSearch LogisticRegression Classfier
+param_grid_l = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000] }
+
+### Function to try different k value for SelectKBest
+def select_k_value(k):
+    print ('k = {0}'.format(k))
+    best_features = select_k_best(k)
+    ### Save data_dict to my_dataset
+    my_dataset = data_dict
+
+    my_dataset = featureFormat(my_dataset, best_features)
+    labels, features = targetFeatureSplit(my_dataset)
+
+    ### Scale features 
+    features = MinMaxScaler().fit_transform(features)
+
+    ### Find best params 
+    best_params_knn = find_best_params(knn_clf, features, labels, param_grid_knn)
+    best_params_svc = find_best_params(svc_clf, features, labels, param_grid_svc)
+    best_params_dt = find_best_params(dt_clf, features, labels, param_grid_dt)
+    best_params_l = find_best_params(l_clf, features, labels, param_grid_l)
+
+    ### Set best params
+    knn_tune = knn_clf.set_params(**best_params_knn)
+    svc_tune = svc_clf.set_params(**best_params_svc)
+    dt_tune = dt_clf.set_params(**best_params_dt)
+    l_tune = l_clf.set_params(**best_params_l)
+
+    ### Evaluation
+    evaluation(features, labels, nb_clf, 'Naive Bayes Classifier')
+    evaluation(features, labels, knn_clf, 'K Nearest Neighbors Classifier')
+    evaluation(features, labels, knn_tune, 'K Nearest Neighbors Classifier Tune')
+    evaluation(features, labels, svc_clf, 'SVC Classifier')
+    evaluation(features, labels, svc_tune, 'SVC Classifier Tune')
+    evaluation(features, labels, dt_clf, 'Decision Tree Classifier')
+    evaluation(features, labels, dt_tune, 'Decision Tree Classifier Tune')
+    evaluation(features, labels, l_clf, 'Logistic Regression Classifier')
+    evaluation(features, labels, l_tune, 'Logistic Regression Classifier Tune')
+
+
+### Try different k to find out the best number of features
+k_best = list(range(3,4))
+for k in k_best:
+    select_k_value(k)
+
+### Print out the k = 4
+def k_best_features_score(k):
+    select_k_best = SelectKBest(k=k)
+    select_k_best.fit(features_i, labels_i)
+    scores = select_k_best.scores_
+    unsorted_pairs = zip(all_features[1:], scores)
+    k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
+    print ('Best features selected and Scores:')
+    print (k_best_features)
+
+k_best_features_score(4)
+
+### Select best performing classfier
+clf = nb_clf
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
 ### generates the necessary .pkl files for validating your results.
 
-dump_classifier_and_data(nb_clf, my_dataset, k_best_features)
-#dump_classifier_and_data(k_clf, my_dataset, k_best_features)
+features_list = select_k_best(4)
+print (features_list)
+my_dataset = data_dict
+
+dump_classifier_and_data(clf, my_dataset, features_list)
