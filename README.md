@@ -2,6 +2,8 @@
  
 The project uses the enron dataset, which includes the email data and financial data of employees. The project uses machine learning algorithm to identify Enron Employees who might have committed fraud. 
 
+You can get the starter code on git: git clone https://github.com/udacity/ud120-projects.git
+
 **TODO**
 While reading through the text you should highlight some variable / feature / algortihms, especially when it is a variable you defined your code. You can do this either:
 
