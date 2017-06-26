@@ -201,7 +201,6 @@ l_clf = LogisticRegression(penalty='l2')
 def evaluation(features, labels, clf, name):
     cv = StratifiedShuffleSplit(n_splits=10, test_size=0.3, random_state=42)
     cv.get_n_splits(features, labels)
-    print(cv)
     accuracy = []
     precision = []
     recall = []
@@ -279,15 +278,15 @@ def select_k_value(k):
     l_tune = l_clf.set_params(**best_params_l)
 
     ### Evaluation
-    evaluation(features, labels, nb_clf, 'Naive Bayes Classifier without Tuning')
-    evaluation(features, labels, knn_clf, 'K Nearest Neighbors Classifier without Tuning')
-    evaluation(features, labels, knn_tune, 'K Nearest Neighbors Classifier with Tuning')
-    evaluation(features, labels, svc_clf, 'SVC Classifier without Tuning')
-    evaluation(features, labels, svc_tune, 'SVC Classifier with Tuning')
-    evaluation(features, labels, dt_clf, 'Decision Tree Classifier without Tuning')
-    evaluation(features, labels, dt_tune, 'Decision Tree Classifier with Tuning')
-    evaluation(features, labels, l_clf, 'Logistic Regression Classifier without Tuning')
-    evaluation(features, labels, l_tune, 'Logistic Regression Classifier with Tuning')
+    evaluation(features, labels, nb_clf, 'Naive Bayes Classifier (without Tuning)')
+    evaluation(features, labels, knn_clf, 'K Nearest Neighbors Classifier (without Tuning)')
+    evaluation(features, labels, knn_tune, 'K Nearest Neighbors Classifier (with Tuning)')
+    evaluation(features, labels, svc_clf, 'SVC Classifier (without Tuning)')
+    evaluation(features, labels, svc_tune, 'SVC Classifier (with Tuning)')
+    evaluation(features, labels, dt_clf, 'Decision Tree Classifier (without Tuning)')
+    evaluation(features, labels, dt_tune, 'Decision Tree Classifier (with Tuning)')
+    evaluation(features, labels, l_clf, 'Logistic Regression Classifier (without Tuning)')
+    evaluation(features, labels, l_tune, 'Logistic Regression Classifier (with Tuning)')
 
 
 ### Try different k to find out the best number of features
