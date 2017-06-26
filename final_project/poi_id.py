@@ -128,12 +128,12 @@ data_dict.pop('TOTAL', 0)
 ### Visualise outliers after removing the total line
 print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
 
-### Sort the list of outliers and print the top 3 outliers in the list
+### Sort the list of outliers and print the 3 outliers in the list
 print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
 
 ### Print out the three outliers: persons with highest salary
-print ('Three persons of highest salary:')
+print ('Print out the three outliers: Employees with highest salary:')
 print (data_dict['SKILLING JEFFREY K'])
 print (data_dict['LAY KENNETH L'])
 print (data_dict['FREVERT MARK A'])

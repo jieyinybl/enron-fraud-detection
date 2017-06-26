@@ -12,6 +12,7 @@ While reading through the text you should highlight some variable / feature / al
 > Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?
  
 The dataset includes Enron employees’ email data and financial data. The project applies machine learning algorithm to discover patterns in the data in order to detect fraud. The dataset contains in total 146 data points, namely 146 employees data. The features in the dataset can be grouped into three categories: Financial features, Email features and POI label. 
+
 First of all, the project takes a closer look at the dataset: total data points, allocation across classes, features used, and missing values. In the following a summary of the data exploration:
 
 | Data                         | Value |
@@ -19,7 +20,7 @@ First of all, the project takes a closer look at the dataset: total data points,
 | Total number of data points: | 146 |
 | Number of person of interest: | 18 |
 | Number of non person of interest: | 128 |
-| Number of features used | 21 |
+| Number of features used | 19 |
 | Number of missing value in feature salary: | 51 |
 | Number of missing value in feature to_messages: | 60 |
 | Number of missing value in feature deferral_payments: | 107 |
@@ -34,11 +35,9 @@ First of all, the project takes a closer look at the dataset: total data points,
 | Number of missing value in feature loan_advances: | 142 |
 | Number of missing value in feature from_messages: | 60 |
 | Number of missing value in feature from_this_person_to_poi: | 60 |
-| Number of missing value in feature poi: | 0 |
 | Number of missing value in feature director_fees: | 129 |
 | Number of missing value in feature deferred_income: | 97 |
 | Number of missing value in feature long_term_incentive: | 80 |
-| Number of missing value in feature email_address: | 35 |
 | Number of missing value in feature from_poi_to_this_person: | 60 |
 
 
@@ -55,7 +54,15 @@ The three persons are printed out and they turn out to be the three big bosses o
 
 **TODO: Put some code extract that shows the filtering and plotting of the outliers here**
 ```python
-just past the code here
+### Sort the list of outliers and print the top 3 outliers in the list
+print ('Outliers in terms of salary: ')
+pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
+
+### Print out the three outliers: persons with highest salary
+print ('Print out the three outliers: Employees with highest salary:')
+print (data_dict['SKILLING JEFFREY K'])
+print (data_dict['LAY KENNETH L'])
+print (data_dict['FREVERT MARK A'])
 ```
 >[('SKILLING JEFFREY K', 1111258),
 > ('LAY KENNETH L', 1072321),
