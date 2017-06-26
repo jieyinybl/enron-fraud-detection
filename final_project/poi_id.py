@@ -16,19 +16,18 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVC
 from sklearn.feature_selection import SelectKBest
 from sklearn.feature_selection import chi2
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
-from sklearn.model_selection import KFold
 from sklearn.grid_search import GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
 
 
 
 ### Task 1: Select what features you'll use.
+
 
 target_label = 'poi'
 
@@ -76,8 +75,6 @@ print ('Number of person of interest: %d' %num_poi)
 print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
 
 ### Number of features used
-#names = data_dict.keys()
-#all_features = data_dict['METTS MARK'].keys()
 all_features = financial_features + email_features
 print('Number of features: %d' %len(all_features))
 print('Number of financial features: %d' %len(financial_features))
@@ -95,7 +92,9 @@ def num_missing_value(feature):
 for feature in all_features:
     num_missing_value(feature)
 
+
 ### Task 2: Remove outliers
+
 
 ### Function to plot 2 dimensions
 def Plot_2dimension(data_dict, feature_x, feature_y):
@@ -131,15 +130,17 @@ print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
 
 ### Sort the list of outliers and print the top 3 outliers in the list
 print ('Outliers in terms of salary: ')
-pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:3])
+pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
 
-### Print out the three persons with highest salary
+### Print out the three outliers: persons with highest salary
 print ('Three persons of highest salary:')
 print (data_dict['SKILLING JEFFREY K'])
 print (data_dict['LAY KENNETH L'])
 print (data_dict['FREVERT MARK A'])
 
+
 ### Task 3: Create new feature(s)
+
 
 ### Store data_dict to my_dataset
 my_dataset = data_dict
@@ -160,14 +161,14 @@ for name in my_dataset:
     percent_send_email_to_poi = compute_ratio(name['from_this_person_to_poi'], name['from_messages'])
     name['percent_send_email_to_poi'] = percent_send_email_to_poi
 
+### Update all_features list with new features
 all_features = [target_label] + all_features + ['percent_received_email_from_poi', 'percent_send_email_to_poi']
 
-### Extract features and labels from dataset for local testing
+### Extract features and labels from dataset
 my_dataset = featureFormat(my_dataset, all_features)
 labels_i, features_i = targetFeatureSplit(my_dataset)
 
-### Deploy univariate feature selection with SelectKBest
-
+### Create function: univariate feature selection with SelectKBest
 def select_k_best(k):
     select_k_best = SelectKBest(k=k)
     select_k_best.fit(features_i, labels_i)
@@ -176,7 +177,9 @@ def select_k_best(k):
     k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
     return [target_label] + k_best_features.keys()
 
+
 ### Task 4: Try a varity of classifiers
+
 
 ### Gaussian Naive Bayes
 nb_clf = GaussianNB()
@@ -191,13 +194,10 @@ l_clf = LogisticRegression(penalty='l2')
 
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
-### using our testing script. Check the tester.py script in the final project
-### folder for details on the evaluation method, especially the test_classifier
-### function. 
+### using our testing script. 
 
 
-### Evaluation: Precision, recall, f1
-
+### Evaluation metrics: Accuracy, precision, recall, f1
 def evaluation(features, labels, clf, name):
     cv = StratifiedShuffleSplit(n_splits=10, test_size=0.3, random_state=42)
     cv.get_n_splits(features, labels)
@@ -223,6 +223,7 @@ def evaluation(features, labels, clf, name):
     print ('Mean of recall: {0}'.format(np.mean(recall)))
     print ('Mean of f1 score: {0}'.format(np.mean(f1)))
 
+### Function: GridSearchCV to tune parameters
 def find_best_params(clf, features, labels, param_grid):
     grid = GridSearchCV(clf, param_grid, cv=10, scoring = 'recall')
     grid.fit(features, labels)
@@ -230,17 +231,17 @@ def find_best_params(clf, features, labels, param_grid):
     grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
     return grid.best_params_
 
-### Param Grid KNN
+### Input Param Grid for KNN
 k_range = list(range(1,11))
 algorithm_options = ['ball_tree','kd_tree','brute','auto']
 param_grid_knn = dict(n_neighbors=k_range, algorithm=algorithm_options)
 
-### Param Grid SVC
+### Input: Param Grid for SVC
 param_grid_svc = [
   {'C': [1, 10, 50, 100, 150, 1000], 'kernel': ['linear','rbf']},
   {'C': [1, 10, 50, 100, 150, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001], 'kernel': ['linear','rbf']}]
 
-### Param Grid Decision Tres Classifier
+### Input Param Grid for Decision Tree Classifier
 param_grid_dt = {"criterion": ["gini", "entropy"],
               "min_samples_split": [2, 10, 20],
               "max_depth": [None, 2, 5, 10],
@@ -248,7 +249,7 @@ param_grid_dt = {"criterion": ["gini", "entropy"],
               "max_leaf_nodes": [None, 5, 10, 20],
               }
 
-### GridSearch LogisticRegression Classfier
+### Input Param Grid for LogisticRegression Classfier
 param_grid_l = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000] }
 
 ### Function to try different k value for SelectKBest
@@ -258,6 +259,7 @@ def select_k_value(k):
     ### Save data_dict to my_dataset
     my_dataset = data_dict
 
+    ### Extract features and labels from dataset
     my_dataset = featureFormat(my_dataset, best_features)
     labels, features = targetFeatureSplit(my_dataset)
 
@@ -277,23 +279,24 @@ def select_k_value(k):
     l_tune = l_clf.set_params(**best_params_l)
 
     ### Evaluation
-    evaluation(features, labels, nb_clf, 'Naive Bayes Classifier')
-    evaluation(features, labels, knn_clf, 'K Nearest Neighbors Classifier')
-    evaluation(features, labels, knn_tune, 'K Nearest Neighbors Classifier Tune')
-    evaluation(features, labels, svc_clf, 'SVC Classifier')
-    evaluation(features, labels, svc_tune, 'SVC Classifier Tune')
-    evaluation(features, labels, dt_clf, 'Decision Tree Classifier')
-    evaluation(features, labels, dt_tune, 'Decision Tree Classifier Tune')
-    evaluation(features, labels, l_clf, 'Logistic Regression Classifier')
-    evaluation(features, labels, l_tune, 'Logistic Regression Classifier Tune')
+    evaluation(features, labels, nb_clf, 'Naive Bayes Classifier without Tuning')
+    evaluation(features, labels, knn_clf, 'K Nearest Neighbors Classifier without Tuning')
+    evaluation(features, labels, knn_tune, 'K Nearest Neighbors Classifier with Tuning')
+    evaluation(features, labels, svc_clf, 'SVC Classifier without Tuning')
+    evaluation(features, labels, svc_tune, 'SVC Classifier with Tuning')
+    evaluation(features, labels, dt_clf, 'Decision Tree Classifier without Tuning')
+    evaluation(features, labels, dt_tune, 'Decision Tree Classifier with Tuning')
+    evaluation(features, labels, l_clf, 'Logistic Regression Classifier without Tuning')
+    evaluation(features, labels, l_tune, 'Logistic Regression Classifier with Tuning')
 
 
 ### Try different k to find out the best number of features
-k_best = list(range(3,4))
+k_best = list(range(3,11))
 for k in k_best:
     select_k_value(k)
 
-### Print out the k = 4
+### With k = 4, naive bayes classfier shows the best perfoamnce.
+### Create function to print out features and scores by given K value
 def k_best_features_score(k):
     select_k_best = SelectKBest(k=k)
     select_k_best.fit(features_i, labels_i)
@@ -303,18 +306,21 @@ def k_best_features_score(k):
     print ('Best features selected and Scores:')
     print (k_best_features)
 
+### Print out the best features and scores
 k_best_features_score(4)
-
-### Select best performing classfier
-clf = nb_clf
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can
 ### check your results. You do not need to change anything below, but make sure
 ### that the version of poi_id.py that you submit can be run on its own and
 ### generates the necessary .pkl files for validating your results.
 
+### Save the best performing classifier as clf for export
+clf = nb_clf
+
+### Save best features as features_list for export
 features_list = select_k_best(4)
-print (features_list)
+
+### Save to my_dataset for export
 my_dataset = data_dict
 
 dump_classifier_and_data(clf, my_dataset, features_list)
