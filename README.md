@@ -70,14 +70,14 @@ print (data_dict['FREVERT MARK A'])
 As two of the three persons (SKILLING JEFFREY K & LAY KENNETH L) above are person of interest out of 18 person of interest in total, we will not removed these three outliers here.
 
 ## Question 2:
-> What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.  [relevant rubric items: “create new features”, “intelligently select features”, “properly scale features”]
+> What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.
 
-The project creates 2 new features: `percent_received_email_from_poi` & `percent_send_email_to_poi`. As compared with absolute number, ratio would tells better how strong the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project deploys univariate feature selection to select the k best features:
+The project creates 2 new features: `percent_received_email_from_poi` & `percent_send_email_to_poi`. As compared with absolute number, ratio would tells better how strong is the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project deploys univariate feature selection to select the k best features:
 
-1. Create function of selecting the k best features
-1. Use GridSearchCV to select the best parameters
-1. Set the parameter of the selected machine learning algorithms with the best parameters and evaluate the performance of the algorithms 
-1. Repeat the above process of selecting best features for k ranged from 3 to 10. Based on the Recall, select the best K value.
+1. Create function with **SelectKBest** to select the k best features
+1. Use **GridSearchCV** to select the best parameters
+1. Set the parameters of the selected machine learning algorithms with the best parameters and evaluate the performance of the algorithms
+1. Repeat the above process for k ranged from 3 to 10. Based on the Recall, select the best K value.
 
 With the above process, k = 4 turns out to be the best K value. The selected features and the scores are:
 
@@ -88,7 +88,7 @@ With the above process, k = 4 turns out to be the best K value. The selected fea
 | salary | 18.575703268041785 | 
 | total_stock_value | 24.467654047526398 |
 
-As the features in the dataset includes both email features and financial features, whose range are quite different: for example, the max value for feature salary is more than 10 million whereas the max value for the feature from_this_person_to_poi is less than 1k. In order to avoid that some features are too dominant due to its range, features will be rescaled with MinMaxScaler.
+As the features in the dataset includes both email features and financial features, whose range are quite different: for example, the max value for the feature salary is more than 10 million whereas the max value for the feature from_this_person_to_poi is less than 1k. In order to avoid that some features are too dominant due to its range, features will be rescaled with **MinMaxScaler**.
 
 ## Question 3:
 > What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
