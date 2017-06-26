@@ -2,7 +2,15 @@
  
 The project uses the enron dataset, which includes the email data and financial data of employees. The project uses machine learning algorithm to identify Enron Employees who might have committed fraud. 
 
-You can get the starter code on git: git clone https://github.com/udacity/ud120-projects.git
+## Scope of this submission
+This submission contains the following files:
+
+| File / Directory | Description |
+| ---------------- | ----------- |
+| poi_id.py        | Python code used for the analysis. In order to run it, you need to put it in the **final_project** directory of the starter project. You can get the starter code on git: 'git clone https://github.com/udacity/ud120-projects.git' |
+| my_classifier.pkl, my_dataset.pkl, my_feature_list.pkl | required pickle files |
+| image | directory containing plots used in this readme |
+| README.md | the project documention |
 
 ## Question 1:
 > Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?  [relevant rubric items: “data exploration”, “outlier investigation”]
