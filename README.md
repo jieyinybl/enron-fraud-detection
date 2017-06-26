@@ -44,7 +44,7 @@ First of all, the project takes a closer look at the dataset: total data points,
 Secondly, a two dimensional plotting will be applied to see if there is any outlier. By the first plotting, we plot the salary and total_payments and notice that there is an outlier ‘TOTAL’, which should be removed. 
 
 **TODO insert a screenshot of the first plot**
-![here should be the first plot](../final_project/image/Figure_1.png)
+![here should be the first plot](../master/final_project/image/Figure_1.png)
 
 After the ‘TOTAL’ is removed, we plot the salary and total_payments again and can see from the plot that there are three outliers in terms of salary.  
 
