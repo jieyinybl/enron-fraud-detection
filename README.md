@@ -52,7 +52,6 @@ After the ‘TOTAL’ is removed, we plot the salary and total_payments again an
 
 The three persons are printed out and they turn out to be the three big bosses of Enron at that time: 
 
-**TODO: Put some code extract that shows the filtering and plotting of the outliers here**
 ```python
 ### Sort the list of outliers and print the top 3 outliers in the list
 print ('Outliers in terms of salary: ')
