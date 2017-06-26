@@ -206,6 +206,7 @@ With the 4 best features selected, the naive bayes shows the best performance on
 1. Mean of f1 score: 0.42847041847: The harmonic mean of precision and recall is 0.42.
 
 ## Sources
+- Udacity Data Analyst Nanodegree - Intro to Machine Learning
 - http://machinelearningmastery.com/feature-selection-machine-learning-python/
 - http://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.SelectKBest.html
 - http://scikit-learn.org/stable/modules/generated/sklearn.model_selection.StratifiedShuffleSplit.html
