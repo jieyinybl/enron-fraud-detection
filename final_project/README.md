@@ -4,12 +4,6 @@ The project uses the enron dataset, which includes the email data and financial 
 
 You can get the starter code on git: git clone https://github.com/udacity/ud120-projects.git
 
-**TODO**
-While reading through the text you should highlight some variable / feature / algortihms, especially when it is a variable you defined your code. You can do this either:
-
-- **makes it bold**
-- `CodeStyle`
-
 ## Question 1:
 > Summarize for us the goal of this project and how machine learning is useful in trying to accomplish it. As part of your answer, give some background on the dataset and how it can be used to answer the project question. Were there any outliers in the data when you got it, and how did you handle those?  [relevant rubric items: “data exploration”, “outlier investigation”]
  
@@ -73,29 +67,29 @@ As two of the three persons (SKILLING JEFFREY K & LAY KENNETH L) above are perso
 ## Question 2:
 > What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.  [relevant rubric items: “create new features”, “intelligently select features”, “properly scale features”]
 
-The project creates 2 new features: `percent_received_email_from_poi` & `percent_send_email_to_poi`. As compared with absolute number, ratio would tells better how strong is the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project deploys univariate feature selection to select the k best features:
+The project creates 2 new features: `percent_received_email_from_poi` & `percent_send_email_to_poi`. Instead of comparing with absolute numbers, the ratio shows better how strong the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project deploys univariate feature selection to select the k best features:
 
 1. Create function with **SelectKBest** to select the k best features
 1. Use **GridSearchCV** to select the best parameters
 1. Set the parameters of the selected machine learning algorithms with the best parameters and evaluate the performance of the algorithms
 1. Repeat the above process for k ranged from 3 to 10. Based on the Recall, select the best K value.
 
-With the above process, k = 4 turns out to be the best K value. The selected features and the scores are:
+With the above process, **k = 4** turns out to be the best K value. The selected features and the scores are:
 
-| Feature | Score |
+| Feature | Score |
 |:------- | -----:|
-| bonus | 21.060001707536571 | 
-| exercised_stock_options | 25.097541528735491 |
-| salary | 18.575703268041785 | 
-| total_stock_value | 24.467654047526398 |
+| bonus | 21.060001707536571 | 
+| exercised_stock_options | 25.097541528735491 |
+| salary | 18.575703268041785 | 
+| total_stock_value | 24.467654047526398 |
 
-As the features in the dataset includes both email features and financial features, whose range are quite different: for example, the max value for the feature salary is more than 10 million whereas the max value for the feature from_this_person_to_poi is less than 1k. In order to avoid that some features are too dominant due to its range, features will be rescaled with **MinMaxScaler**.
+As the features in the dataset include both email features and financial features, the ranges are quite different: for example, the max value for the feature `salary` is more than 10 million whereas the max value for the feature `from_this_person_to_poi` is less than 1k. In order to avoid that some features are too dominant due to its range, features will be rescaled with **MinMaxScaler**.
 
 ## Question 3:
 > What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms? [relevant rubric item: “pick an algorithm”]
  
 **Naive bayes**, **support vector classifier**, **K nearest neighbors**, **decision tree** and **logistic regression** are tested with the selected k_best_features (k_range from 3 to 10). As evaluation strategy the accuracy_score, precision_score, recall_score and f1_score will be calculated.
-To decide that which algorithms works better, the project will mainly focus on the recall. Moreover, the precision and f1_score which are greater than 0.3 will also be considered as good performance. The accuracy_score here is not a strong index for the performance, due to that there is only small percent of person of interest in the dataset. 
+To decide which algorithm works better, the project will mainly focus on the recall. Moreover, the precision and f1_score which are greater than 0.3 will also be considered as good performance. The accuracy_score here is not a strong index for the performance, due to that there is only small percent of person of interest in the dataset. 
 
 To sum up the evaluation strategy:
 
@@ -112,9 +106,9 @@ In the following an overview of the algorithms selected according to the above e
 | k = 5 | Naive Bayes Classifier (without Tuning)         | 0.857 | 0.384 | 0.42  | 0.39271950272   |
 | k = 5 | Logistic Regression Classifier (with Tuning)    | 0.877 | 0.434 | 0.3   | 0.343759018759  |
 | k = 6 | Naive Bayes Classifier (without Tuning)         | 0.843 | 0.425 | 0.4   | 0.392395382395  |
-| k = 7 | Naive Bayes Classifier (without Tuning)         | 0.833 | 0.392 | 0.4   | 0.371882561883  |
+| k = 7 | Naive Bayes Classifier (without Tuning)         | 0.833 | 0.392 | 0.4   | 0.371882561883  |
 | k = 8 | Naive Bayes Classifier (without Tuning)         | 0.837 | 0.402 | 0.4   | 0.379847929848  |
-| k = 9 | Naive Bayes Classifier (without Tuning)         | 0.836 | 0.323 | 0.324 | 0.309473304473  |
+| k = 9 | Naive Bayes Classifier (without Tuning)         | 0.836 | 0.323 | 0.324 | 0.309473304473  |
 
 ## Question 4:
 > What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? What parameters did you tune? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).  [relevant rubric items: “discuss parameter tuning”, “tune the algorithm”]
@@ -169,22 +163,22 @@ After parameter tuning, the performance of some of the classfier is not signific
 ## Question 5: 
 > What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis? [relevant rubric items: “discuss validation”, “validation strategy”]
  
-In machine learning, validation is a method to test the model’s performance by splitting the data into training and testing data: train the model with the training dataset and test it with the testing dataset. The performance of the algorithm will be validated with the performance when the model is applied on the testing dataset. With validation the problem of overfitting can be avoided and the model’s performance can be improved when it is applied with an independent dataset. Without proper validation of the machine learning algorithm, overfitting can happened: the model can be overfitted with every single data point. In this way the model could have very high accuracy_score on the training data. However, the model will be failed in new cases / independent dataset, as the model doesn’t generalize the cases but simply ‘remember’ each single case.
+In machine learning, validation is a method to test the model’s performance by splitting the data into training and testing data: train the model with the training dataset and test it with the testing dataset. The performance of the algorithm will be validated with the performance when the model is applied on the testing dataset. With validation the problem of overfitting can be avoided and the model’s performance can be improved when it is applied with an independent dataset. Without proper validation of the machine learning algorithm, overfitting can happen: the model can be overfitted with every single data point. In this way the model could have very high accuracy_score on the training data. However, the model will fail in new cases / independent datasets, as the model doesn’t generalize the cases, but simply ‘remembers’ each single case.
  
 This project applies the cross validation strategy: The dataset will be split into 10 folds, and each fold will be used both for testing as well as training. The performance of the model will be measured with the average accuracy_score, precision_score, recall_score and f1_score. The cross validation strategy will have more advantages than simply splitting the data into training and testing sets in the enron dataset case. The main reason is that the data points in the Enron dataset is in total 145 (after removing the ‘TOTAL’ line) and with cross validation the training and testing dataset can be better splitted to avoid unequal splitting of across the class POI / non POI.
 
 ## Question 6: 
 > Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance. [relevant rubric item: “usage of evaluation metrics”]
  
-The project uses the following evaluation metrics: accuracy_score, precision_score, recall_score, and f1_score. When we take a closer look at the accuracy_score, most of them are above 0.8, which doesn’t tell much about the performance of model. Moreover, due to that the there is in total 18 person of interest out of 145 in the dataset, the accuracy_score will not be a strong index for the performance of model.
+The project uses the following evaluation metrics: **accuracy_score**, **precision_score**, **recall_score**, and **f1_score**. When we take a closer look at the accuracy_score, most of them are above 0.8, which doesn’t tell much about the performance of model. Moreover, due to that there are in total 18 person of interest out of 145 in the dataset, the accuracy_score will not be a strong index for the performance of model.
  
-As the goal of the project is to identify the person of interest, namely how many person of interest are identified, the recall_score will be a better metrics here: 
+As the goal of the project is to identify the person of interest, namely how many person of interest are identified, the recall_score will be a better metric here: 
 
 ```python
 recall_score = number_correct_identified_POI / total_number_POI
 ```
 
-If the model predicts every person as POI, then the recall_score will be 1. Therefore, the precision_score will be also looked at. The precision_score tells that how many predicted POI are true POI:
+If the model predicts every person as POI, then the recall_score will be 1. Therefore, the precision_score will be looked at as well. The precision_score tells that how many predicted POI are true POI:
 
 ```python
 precision_score = number_correct_identified_POI / total_number_POI_predicted
@@ -222,5 +216,3 @@ With the 4 best features selected, the naive bayes shows the best performance on
 - https://en.wikipedia.org/wiki/Hyperparameter_(machine_learning)
 - https://en.wikipedia.org/wiki/Precision_and_recall
 - https://en.wikipedia.org/wiki/F1_score
-
-
