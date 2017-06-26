@@ -175,7 +175,7 @@ This project applies the cross validation strategy: The dataset will be split in
 ## Question 6: 
 > Give at least 2 evaluation metrics and your average performance for each of them.  Explain an interpretation of your metrics that says something human-understandable about your algorithm’s performance.
  
-The project calculates the following scores: accuracy_score, precision_score, recall_score, f1_score. When we take a closer look at the accuracy_score, most of them are above 0.8, which doesn’t tell much about the performance of model. Moreover, due to that the there is in total 18 person of interest out of 145 in the dataset, the accuracy_score will not be a strong index for the performance of model.
+The project uses the following evaluation metrics: accuracy_score, precision_score, recall_score, and f1_score. When we take a closer look at the accuracy_score, most of them are above 0.8, which doesn’t tell much about the performance of model. Moreover, due to that the there is in total 18 person of interest out of 145 in the dataset, the accuracy_score will not be a strong index for the performance of model.
  
 As the goal of the project is to identify the person of interest, namely how many person of interest are identified, the recall_score will be a better metrics here: 
 
@@ -190,6 +190,13 @@ precision_score = number_correct_identified_POI / total_number_POI_predicted
 ```
 
 F1_score is the harmonic mean of precision and recall. 
+
+To sum up the evaluation strategy:
+
+1. Different K value are tried with **SelectKBest**
+1. Algorithms with precision_score, recall_score and f1_score greater than 0.3 are selected.
+1. The higher the recall is, the better the performance of an algorithms is.
+
 With the 4 best features selected, the naive bayes shows the best performance on average:
 
 1. Mean of accuracy = 0.861: 86.1% of the 145 data points are correctly predicted
