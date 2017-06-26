@@ -102,7 +102,7 @@ To sum up the evaluation strategy:
 1. Algorithms with precision_score, recall_score and f1_score greater than 0.3 are selected.
 1. The higher the recall is, the better the performance of an algorithms is.
 
-In the following an overview of the algorithms selected according to the above evaluation strategy. It turns out the with the k=4, the naive bayes shows the highest scores:
+In the following an overview of the algorithms selected according to the above evaluation strategy. It turns out the with the k=4, the **Naive Bayes Classifier** shows the highest scores:
 
 | K value | Classifier | Mean Accuracy | Mean of precision | Mean of recall | Mean of f1 score |
 | ------- | ---------- | -------------:| -----------------:| --------------:| -----------:|
