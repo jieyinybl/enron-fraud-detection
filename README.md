@@ -91,11 +91,18 @@ With the above process, k = 4 turns out to be the best K value. The selected fea
 As the features in the dataset includes both email features and financial features, whose range are quite different: for example, the max value for the feature salary is more than 10 million whereas the max value for the feature from_this_person_to_poi is less than 1k. In order to avoid that some features are too dominant due to its range, features will be rescaled with **MinMaxScaler**.
 
 ## Question 3:
-> What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms?
+> What algorithm did you end up using? What other one(s) did you try? How did model performance differ between algorithms? [relevant rubric item: “pick an algorithm”]
  
-Naive bayes, support vector classifier, K nearest neighbors, decision tree and logistic regression are tested with the selected k_best_features (k_range from 3 to 10). As evaluation strategy the accuracy_score, precision_score, recall_score and f1_score will be calculated.
+**Naive bayes**, **support vector classifier**, **K nearest neighbors**, **decision tree** and **logistic regression** are tested with the selected k_best_features (k_range from 3 to 10). As evaluation strategy the accuracy_score, precision_score, recall_score and f1_score will be calculated.
 To decide that which algorithms works better, the project will mainly focus on the recall. Moreover, the precision and f1_score which are greater than 0.3 will also be considered as good performance. The accuracy_score here is not a strong index for the performance, due to that there is only small percent of person of interest in the dataset. 
-It turns out the with the k=4, the naive bayes shows the highest scores:
+
+To sum up the evaluation strategy:
+
+1. Different K value are tried with **SelectKBest**
+1. Algorithms with precision_score, recall_score and f1_score greater than 0.3 are selected.
+1. The higher the recall is, the better the performance of an algorithms is.
+
+In the following an overview of the algorithms selected according to the above evaluation strategy. It turns out the with the k=4, the naive bayes shows the highest scores:
 
 | K value | Classifier | Mean Accuracy | Mean of precision | Mean of recall | Mean of f1 score |
 | ------- | ---------- | -------------:| -----------------:| --------------:| -----------:|
