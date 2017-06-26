@@ -106,6 +106,7 @@ In the following an overview of the algorithms selected according to the above e
 
 | K value | Classifier | Mean Accuracy | Mean of precision | Mean of recall | Mean of f1 score |
 | ------- | ---------- | -------------:| -----------------:| --------------:| -----------:|
+| k = 3 | Naive Bayes Classifier (without Tuning)         | 0.829 | 0.332 | 0.32  | 0.316919191919  |
 | k = 4 | Naive Bayes Classifier         | 0.861 | 0.511 | 0.42  | 0.42847041847  |
 | k = 5 | Naive Bayes Classifier         | 0.857 | 0.384 | 0.42  | 0.39271950272  |
 | k = 5 | Logistic Regression Classifier | 0.877 | 0.434 | 0.3   | 0.343759018759 |
