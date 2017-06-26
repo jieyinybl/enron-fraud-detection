@@ -118,28 +118,28 @@ In the following an overview of the algorithms selected according to the above e
 ## Question 4:
 > What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? What parameters did you tune? (Some algorithms do not have parameters that you need to tune -- if this is the case for the one you picked, identify and briefly explain how you would have done it for the model that was not your final choice or a different model that does utilize parameter tuning, e.g. a decision tree classifier).  [relevant rubric items: “discuss parameter tuning”, “tune the algorithm”]
 
-**Hyperparameter tuning** selects a set of optimal hyperparameters for machine learning algorithms. It can help to avoid overfitting and increase the performance of the algorithms on an independent dataset: 
+**Hyperparameter tuning** selects a set of optimal hyperparameters for machine learning algorithms. It can help to avoid overfitting and increase the performance of the algorithms on an independent dataset (Source: Wikipedia): 
 
-- In case of the K nearest neighbor classifier, GridSearchCV searches through different combination of algorithms and n_neighbors.
-- In case of SVC, GridSearchCV tries different value for C and gamma to avoid overfitting.
-- In case of decision tree classifier, the GridSearchCV can try different value for criterion. Moreover, overfitting can be avoided for example by searching through different min_sample_split.
-- In case of logistic regression classifier, trying different value for the parameter C can help can avoid overfitting as well.
+- In case of the **K nearest neighbor classifier**, **GridSearchCV** searches through different combination of **algorithms** and **n_neighbors**.
+- In case of **SVC**, **GridSearchCV** tries different value for **C** and **gamma** to avoid overfitting.
+- In case of **decision tree classifier**, the **GridSearchCV** can try different value for **criterion**. Moreover, overfitting can be avoided for example by searching through different **min_sample_split**.
+- In case of **logistic regression classifier**, trying different value for the parameter **C** can help can avoid overfitting as well.
 
-**GridSearchCV** is deployed. As scoring method, the recall is used to decide the best parameters. 
-1) For K nearest neighbor the parameter n_neighbors and algorithm are tunned:
+**GridSearchCV** is deployed. As scoring method, the **recall** is used to decide the best parameters. 
+1) For **K nearest neighbor classifier** the parameter n_neighbors and algorithm are tunned:
 ```python
 k_range = list(range(1,11))
 algorithm_options = ['ball_tree','kd_tree','brute','auto']
 param_grid_knn = dict(n_neighbors=k_range, algorithm=algorithm_options)
 ```
-2) For support vector classifier, the parameter C, gamma and kernel are tunned:
+2) For **support vector classifier**, the parameter C, gamma and kernel are tunned:
 ```python
 param_grid_svc = [
   {'C': [1, 10, 50, 100, 150, 1000], 'kernel': ['linear','rbf']},
   {'C': [1, 10, 50, 100, 150, 1000], 'gamma': [0.1, 0.01, 0.001, 0.0001], 'kernel': ['linear','rbf']}]
 ```
  
-3) For decision tree classifier, the parameter criterion, min_samples_split, max_depth, min_samples_leaf, and max_leaf_nodes are tunned:
+3) For **decision tree classifier**, the parameter criterion, min_samples_split, max_depth, min_samples_leaf, and max_leaf_nodes are tunned:
 ```python
 param_grid_dt = {
     "criterion": ["gini", "entropy"],
@@ -149,21 +149,21 @@ param_grid_dt = {
     "max_leaf_nodes": [None, 5, 10, 20],
 }
 ```
-4) For logistic regression classifier, the parameter C is tunned:
+4) For **logistic regression classifier**, the parameter C is tunned:
 ```python
 param_grid_l = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000] }
 ```
 
-After parameter tuning, we can see that the performance of decision tree classifier is improved: 
+After parameter tuning, the performance of some of the classfier is not significantly increased. However, we can see some improvement of performance for **decision tree classifier**: 
 
 | K value | Classifier | Mean Accuracy | Mean of precision | Mean of recall | Mean of f1 score |
 | ------- | ---------- | -------------:| -----------------:| --------------:| -----------:|
-| k = 4 | Decision Tree Classifier | 0.775 | 0.18 | 0.22 | 0.192070707071 |
-| k = 4 | Decision Tree Classifier Tune | 0.787 | 0.198 | 0.24 | 0.214203574204 |
-| k = 5 | Decision Tree Classifier | 0.779 | 0.244 | 0.36 | 0.288171828172 | 
-| k = 5 | Decision Tree Classifier Tune | 0.779 | 0.259 | 0.42 | 0.317517482517 |
-| k = 8 | Decision Tree Classifier | 0.792 | 0.224 | 0.26 | 0.225356277709 | 
-| k = 8 | Decision Tree Classifier Tune | 0.797 | 0.255 | 0.3 | 0.259738562092 |
+| k = 4 | Decision Tree Classifier (without Tuning) | 0.775 | 0.18 | 0.22 | 0.192070707071 |
+| k = 4 | Decision Tree Classifier (with Tuning)  | 0.787 | 0.198 | 0.24 | 0.214203574204 |
+| k = 5 | Decision Tree Classifier (without Tuning) | 0.779 | 0.244 | 0.36 | 0.288171828172 | 
+| k = 5 | Decision Tree Classifier (with Tuning) | 0.779 | 0.259 | 0.42 | 0.317517482517 |
+| k = 8 | Decision Tree Classifier (without Tuning) | 0.792 | 0.224 | 0.26 | 0.225356277709 | 
+| k = 8 | Decision Tree Classifier (with Tuning) | 0.797 | 0.255 | 0.3 | 0.259738562092 |
 
 ## Question 5: 
 > What is validation, and what’s a classic mistake you can make if you do it wrong? How did you validate your analysis? [relevant rubric items: “discuss validation”, “validation strategy”]
