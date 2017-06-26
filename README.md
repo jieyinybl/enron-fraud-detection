@@ -107,13 +107,13 @@ In the following an overview of the algorithms selected according to the above e
 | K value | Classifier | Mean Accuracy | Mean of precision | Mean of recall | Mean of f1 score |
 | ------- | ---------- | -------------:| -----------------:| --------------:| -----------:|
 | k = 3 | Naive Bayes Classifier (without Tuning)         | 0.829 | 0.332 | 0.32  | 0.316919191919  |
-| k = 4 | Naive Bayes Classifier         | 0.861 | 0.511 | 0.42  | 0.42847041847  |
-| k = 5 | Naive Bayes Classifier         | 0.857 | 0.384 | 0.42  | 0.39271950272  |
-| k = 5 | Logistic Regression Classifier | 0.877 | 0.434 | 0.3   | 0.343759018759 |
-| k = 6 | Naive Bayes Classifier         | 0.843 | 0.425 | 0.4   | 0.392395382395 |
-| k = 7 | Naive Bayes Classifier         | 0.833 | 0.392 | 0.4   | 0.371882561883 |
-| k = 8 | Naive Bayes Classifier         | 0.837 | 0.402 | 0.4   | 0.379847929848 |
-| k = 9 | Naive Bayes Classifier         | 0.836 | 0.323 | 0.324 | 0.309473304473 |
+| k = 4 | Naive Bayes Classifier (without Tuning)         | 0.861 | 0.511 | 0.42  | 0.42847041847   |
+| k = 5 | Naive Bayes Classifier (without Tuning)         | 0.857 | 0.384 | 0.42  | 0.39271950272   |
+| k = 5 | Logistic Regression Classifier (with Tuning)    | 0.877 | 0.434 | 0.3   | 0.343759018759  |
+| k = 6 | Naive Bayes Classifier (without Tuning)         | 0.843 | 0.425 | 0.4   | 0.392395382395  |
+| k = 7 | Naive Bayes Classifier (without Tuning)         | 0.833 | 0.392 | 0.4   | 0.371882561883  |
+| k = 8 | Naive Bayes Classifier (without Tuning)         | 0.837 | 0.402 | 0.4   | 0.379847929848  |
+| k = 9 | Naive Bayes Classifier (without Tuning)         | 0.836 | 0.323 | 0.324 | 0.309473304473  |
 
 ## Question 4:
 > What does it mean to tune the parameters of an algorithm, and what can happen if you don’t do this well?  How did you tune the parameters of your particular algorithm? What parameters did you tune?
