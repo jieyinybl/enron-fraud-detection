@@ -23,6 +23,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 from sklearn.grid_search import GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
+import pandas as pd
 
 
 
@@ -59,6 +60,10 @@ email_features = [
 ### Load the dictionary containing the dataset
 with open("final_project_dataset.pkl", "r") as data_file:
     data_dict = pickle.load(data_file)
+
+### Convert data_dict to panda dataframe
+enron = pd.DataFrame.from_dict(data_dict, orient='index')
+enron.describe()
 
 ### Data exploration
 
@@ -125,15 +130,12 @@ pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:1])
 ### Remove the top 1 outlier: the total line
 data_dict.pop('TOTAL', 0)
 
-### Visualise outliers after removing the total line
-print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
-
 ### Sort the list of outliers and print the 3 outliers in the list
 print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
 
-### Print out the three outliers: persons with highest salary
-print ('Print out the three outliers: Employees with highest salary:')
+### Print out the three persons with highest salary
+print ('Print out the three Employees with highest salary:')
 print (data_dict['SKILLING JEFFREY K'])
 print (data_dict['LAY KENNETH L'])
 print (data_dict['FREVERT MARK A'])
@@ -177,6 +179,18 @@ def select_k_best(k):
     k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
     return [target_label] + k_best_features.keys()
 
+### Create function to print out features and scores by given K value
+def k_best_features_score(k):
+    select_k_best = SelectKBest(k=k)
+    select_k_best.fit(features_i, labels_i)
+    scores = select_k_best.scores_
+    unsorted_pairs = zip(all_features[1:], scores)
+    k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
+    print (k_best_features)
+
+### Print all features and scores with SelectKBest
+print ('All features and scores:')
+k_best_features_score((len(all_features)-1))
 
 ### Task 4: Try a varity of classifiers
 
@@ -295,17 +309,8 @@ for k in k_best:
     select_k_value(k)
 
 ### With k = 4, naive bayes classfier shows the best perfoamnce.
-### Create function to print out features and scores by given K value
-def k_best_features_score(k):
-    select_k_best = SelectKBest(k=k)
-    select_k_best.fit(features_i, labels_i)
-    scores = select_k_best.scores_
-    unsorted_pairs = zip(all_features[1:], scores)
-    k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
-    print ('Best features selected and Scores:')
-    print (k_best_features)
-
 ### Print out the best features and scores
+print ('Best features selected and Scores:')
 k_best_features_score(4)
 
 ### Task 6: Dump your classifier, dataset, and features_list so anyone can

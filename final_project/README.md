@@ -75,7 +75,33 @@ As two of the three persons (SKILLING JEFFREY K & LAY KENNETH L) above are perso
 ## Question 2:
 > What features did you end up using in your POI identifier, and what selection process did you use to pick them? Did you have to do any scaling? Why or why not? As part of the assignment, you should attempt to engineer your own feature that does not come ready-made in the dataset -- explain what feature you tried to make, and the rationale behind it. (You do not necessarily have to use it in the final analysis, only engineer and test it.) In your feature selection step, if you used an algorithm like a decision tree, please also give the feature importances of the features that you use, and if you used an automated feature selection function like SelectKBest, please report the feature scores and reasons for your choice of parameter values.  [relevant rubric items: “create new features”, “intelligently select features”, “properly scale features”]
 
-The project creates 2 new features: `percent_received_email_from_poi` & `percent_send_email_to_poi`. Instead of comparing with absolute numbers, the ratio shows better how strong the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project deploys univariate feature selection to select the k best features:
+The project creates 2 new features: **percent_received_email_from_poi** and **percent_send_email_to_poi**. Instead of comparing with absolute numbers, the ratio shows better how strong the email connection of this person to the person of interest than to the non person of interest. After the two features are created, the project applies **SelectKBest** to determine the strength of all features. In the following we see that the new feature **percent_send_email_to_poi** is quite a strong features:
+
+| Feature | Score |
+|:------- | -----:|
+| salary | 18.575703268041785|
+| to_messages | 1.6988243485808501|
+| percent_send_email_to_poi | 16.641707070469|
+| deferral_payments | 0.2170589303395084|
+| total_payments | 8.8667215371077752|
+| loan_advances | 7.2427303965360181|
+| bonus | 21.060001707536571|
+| director_fees | 2.1076559432760908|
+| restricted_stock_deferred | 0.06498431172371151|
+| total_stock_value | 24.467654047526398|
+| shared_receipt_with_poi | 8.7464855321290802|
+| from_poi_to_this_person | 5.3449415231473374|
+| exercised_stock_options | 25.097541528735491|
+| from_messages | 0.16416449823428736|
+| other | 4.204970858301416|
+| from_this_person_to_poi | 2.4265081272428781|
+| deferred_income | 11.595547659730601|
+| expenses | 6.2342011405067401|
+| restricted_stock | 9.3467007910514877|
+| long_term_incentive | 10.072454529369441|
+| percent_received_email_from_poi | 3.2107619169667738 |
+
+Furthermore, the project deploys univariate feature selection to select the k best features:
 
 1. Create function with **SelectKBest** to select the k best features
 1. Use **GridSearchCV** to select the best parameters
