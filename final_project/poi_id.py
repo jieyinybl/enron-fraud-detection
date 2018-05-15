@@ -9,7 +9,6 @@ sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
 from pprint import pprint
-from decimal import Decimal
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import *
 from sklearn.neighbors import KNeighborsClassifier
@@ -18,10 +17,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import chi2
 from sklearn.metrics import accuracy_score
-from sklearn.model_selection import train_test_split
-from sklearn.grid_search import GridSearchCV
+from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import StratifiedShuffleSplit
 import pandas as pd
 
@@ -58,32 +55,29 @@ email_features = [
 ]
 
 ### Load the dictionary containing the dataset
-with open("final_project_dataset.pkl", "r") as data_file:
+with open("final_project_dataset.pkl", "rb") as data_file:
     data_dict = pickle.load(data_file)
 
 ### Convert data_dict to panda dataframe
 enron = pd.DataFrame.from_dict(data_dict, orient='index')
-enron.describe()
+#print(enron.head())
 
 ### Data exploration
 
 ### Total number of data points
-print ('Total number of data points: %d' %len(data_dict))
+#print ('Total number of data points: %d' %len(data_dict))
 
 ### Allocation across classes(POI/non-POI)
-num_poi = 0
-for name in data_dict:
-    person = data_dict[name]
-    if person['poi']:
-        num_poi += 1
-print ('Number of person of interest: %d' %num_poi)
-print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
+num_poi = len(enron[enron['poi'].astype(np.float32)==1])
+
+#print ('Number of person of interest: %d' %num_poi)
+#print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
 
 ### Number of features used
 all_features = financial_features + email_features
-print('Number of features: %d' %len(all_features))
-print('Number of financial features: %d' %len(financial_features))
-print('Number of email features: %d' %len(email_features))
+#print('Number of features: %d' %len(all_features))
+#print('Number of financial features: %d' %len(financial_features))
+#print('Number of email features: %d' %len(email_features))
 
 ### Missing values in features
 def num_missing_value(feature):
@@ -92,7 +86,7 @@ def num_missing_value(feature):
         person = data_dict[name]
         if person[feature] == 'NaN':
             num_missing_value += 1
-    print ('Number of missing value in feature %s: %d' %(feature, num_missing_value))
+    #print ('Number of missing value in feature %s: %d' %(feature, num_missing_value))
 
 for feature in all_features:
     num_missing_value(feature)
@@ -107,13 +101,13 @@ def Plot_2dimension(data_dict, feature_x, feature_y):
     for point in data:
         x = point[0]
         y = point[1]
-        plt.scatter( x, y )
+        plt.scatter(x, y)
     plt.xlabel(feature_x)
     plt.ylabel(feature_y)
     plt.show()
 
 ### Visualise outliers by 2 dimension ploting
-print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
+#print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
 
 ### Create list of outliers based on dimension salary
 outliers = []
@@ -124,21 +118,21 @@ for key in data_dict:
     outliers.append((key,int(val)))
 
 ### Sort the list of outliers and print the top 1 outlier in the list
-print ('Outliers in terms of salary: ')
+#print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:1])
 
 ### Remove the top 1 outlier: the total line
 data_dict.pop('TOTAL', 0)
 
 ### Sort the list of outliers and print the 3 outliers in the list
-print ('Outliers in terms of salary: ')
+#print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
 
 ### Print out the three persons with highest salary
-print ('Print out the three Employees with highest salary:')
-print (data_dict['SKILLING JEFFREY K'])
-print (data_dict['LAY KENNETH L'])
-print (data_dict['FREVERT MARK A'])
+#print ('Print out the three Employees with highest salary:')
+#print (data_dict['SKILLING JEFFREY K'])
+#print (data_dict['LAY KENNETH L'])
+#print (data_dict['FREVERT MARK A'])
 
 
 ### Task 3: Create new feature(s)
@@ -177,7 +171,7 @@ def select_k_best(k):
     scores = select_k_best.scores_
     unsorted_pairs = zip(all_features[1:], scores)
     k_best_features = dict(list(reversed(sorted(unsorted_pairs, key=lambda x: x[1])))[:k])
-    return [target_label] + k_best_features.keys()
+    return [target_label] + list(k_best_features.keys())
 
 ### Create function to print out features and scores by given K value
 def k_best_features_score(k):
@@ -214,7 +208,6 @@ l_clf = LogisticRegression(penalty='l2')
 ### Evaluation metrics: Accuracy, precision, recall, f1
 def evaluation(features, labels, clf, name):
     cv = StratifiedShuffleSplit(n_splits=10, test_size=0.3, random_state=42)
-    cv.get_n_splits(features, labels)
     accuracy = []
     precision = []
     recall = []
@@ -238,11 +231,9 @@ def evaluation(features, labels, clf, name):
 
 ### Function: GridSearchCV to tune parameters
 def find_best_params(clf, features, labels, param_grid):
-    grid = GridSearchCV(clf, param_grid, cv=10, scoring = 'recall')
+    grid = GridSearchCV(clf, param_grid, cv=10)
     grid.fit(features, labels)
-    grid.grid_scores_
-    grid_mean_scores = [result.mean_validation_score for result in grid.grid_scores_]
-    return grid.best_params_
+    return grid
 
 ### Input Param Grid for KNN
 k_range = list(range(1,11))
@@ -263,12 +254,13 @@ param_grid_dt = {"criterion": ["gini", "entropy"],
               }
 
 ### Input Param Grid for LogisticRegression Classfier
-param_grid_l = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000] }
+param_grid_l = {'C': [0.001, 0.01, 0.1, 1, 10, 100, 1000]}
 
 ### Function to try different k value for SelectKBest
-def select_k_value(k):
+def train_model(k):
     print ('k = {0}'.format(k))
     best_features = select_k_best(k)
+    print(best_features)
     ### Save data_dict to my_dataset
     my_dataset = data_dict
 
@@ -280,16 +272,10 @@ def select_k_value(k):
     features = MinMaxScaler().fit_transform(features)
 
     ### Find best params 
-    best_params_knn = find_best_params(knn_clf, features, labels, param_grid_knn)
-    best_params_svc = find_best_params(svc_clf, features, labels, param_grid_svc)
-    best_params_dt = find_best_params(dt_clf, features, labels, param_grid_dt)
-    best_params_l = find_best_params(l_clf, features, labels, param_grid_l)
-
-    ### Set best params
-    knn_tune = knn_clf.set_params(**best_params_knn)
-    svc_tune = svc_clf.set_params(**best_params_svc)
-    dt_tune = dt_clf.set_params(**best_params_dt)
-    l_tune = l_clf.set_params(**best_params_l)
+    knn_tune = find_best_params(knn_clf, features, labels, param_grid_knn)
+    svc_tune = find_best_params(svc_clf, features, labels, param_grid_svc)
+    dt_tune = find_best_params(dt_clf, features, labels, param_grid_dt)
+    l_tune = find_best_params(l_clf, features, labels, param_grid_l)
 
     ### Evaluation
     evaluation(features, labels, nb_clf, 'Naive Bayes Classifier (without Tuning)')
@@ -304,9 +290,9 @@ def select_k_value(k):
 
 
 ### Try different k to find out the best number of features
-k_best = list(range(3,11))
+k_best = list(range(3,10))
 for k in k_best:
-    select_k_value(k)
+    train_model(k)
 
 ### With k = 4, naive bayes classfier shows the best perfoamnce.
 ### Print out the best features and scores
