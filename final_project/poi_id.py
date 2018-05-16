@@ -60,24 +60,24 @@ with open("final_project_dataset.pkl", "rb") as data_file:
 
 ### Convert data_dict to panda dataframe
 enron = pd.DataFrame.from_dict(data_dict, orient='index')
-#print(enron.head())
+print(enron.head())
 
 ### Data exploration
 
 ### Total number of data points
-#print ('Total number of data points: %d' %len(data_dict))
+print ('Total number of data points: %d' %len(data_dict))
 
 ### Allocation across classes(POI/non-POI)
 num_poi = len(enron[enron['poi'].astype(np.float32)==1])
 
-#print ('Number of person of interest: %d' %num_poi)
-#print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
+print ('Number of person of interest: %d' %num_poi)
+print ('Number of non person of interest: %d' %(len(data_dict)-num_poi))
 
 ### Number of features used
 all_features = financial_features + email_features
-#print('Number of features: %d' %len(all_features))
-#print('Number of financial features: %d' %len(financial_features))
-#print('Number of email features: %d' %len(email_features))
+print('Number of features: %d' %len(all_features))
+print('Number of financial features: %d' %len(financial_features))
+print('Number of email features: %d' %len(email_features))
 
 ### Missing values in features
 def num_missing_value(feature):
@@ -107,7 +107,7 @@ def Plot_2dimension(data_dict, feature_x, feature_y):
     plt.show()
 
 ### Visualise outliers by 2 dimension ploting
-#print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
+print(Plot_2dimension(data_dict, 'salary', 'total_payments'))
 
 ### Create list of outliers based on dimension salary
 outliers = []
@@ -118,21 +118,21 @@ for key in data_dict:
     outliers.append((key,int(val)))
 
 ### Sort the list of outliers and print the top 1 outlier in the list
-#print ('Outliers in terms of salary: ')
+print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[:1])
 
 ### Remove the top 1 outlier: the total line
 data_dict.pop('TOTAL', 0)
 
 ### Sort the list of outliers and print the 3 outliers in the list
-#print ('Outliers in terms of salary: ')
+print ('Outliers in terms of salary: ')
 pprint(sorted(outliers,key=lambda x:x[1],reverse=True)[1:4])
 
 ### Print out the three persons with highest salary
-#print ('Print out the three Employees with highest salary:')
-#print (data_dict['SKILLING JEFFREY K'])
-#print (data_dict['LAY KENNETH L'])
-#print (data_dict['FREVERT MARK A'])
+print ('Print out the three Employees with highest salary:')
+print (data_dict['SKILLING JEFFREY K'])
+print (data_dict['LAY KENNETH L'])
+print (data_dict['FREVERT MARK A'])
 
 
 ### Task 3: Create new feature(s)
